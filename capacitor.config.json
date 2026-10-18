@@ -1,0 +1,16 @@
+{
+  "appId": "com.gymingresearch.advance",
+  "appName": "Gyming Research Advance",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "backgroundColor": "#090d0b",
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  }
+}

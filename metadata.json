@@ -1,0 +1,6 @@
+{
+  "name": "Gyming Research Advance",
+  "description": "Train Smarter. Build Stronger. Live Healthier. Advanced evidence-based fitness training, 3D biomechanical exercise studio, research library, home workouts, and AI coaching.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

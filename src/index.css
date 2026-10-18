@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-neon: #3b82f6;
+    --color-neon-bright: #38bdf8;
+  }
+
+  /* Default Light Mode: Clean White Background */
+  html:not(.dark), html.light {
+    --color-bg-main: #ffffff;
+    --color-surface-card: #ffffff;
+    --color-border: #e2e8f0;
+    --color-text-main: #0f172a;
+    background-color: #ffffff;
+    color: #0f172a;
+  }
+
+  /* Dark Mode: Midnight Sapphire */
+  html.dark {
+    --color-bg-main: #080d1a;
+    --color-surface-card: #0f172a;
+    --color-border: #213253;
+    --color-text-main: #f1f5f9;
+    background-color: #080d1a;
+    color: #f1f5f9;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: 'Chakra Petch', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .font-mono-numbers {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom scrollbars for mobile & desktop */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b1120;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #213253;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+/* Electric Blue & Cyan glow utility classes */
+.neon-glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.neon-glow-lg {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.45), 0 0 12px rgba(56, 189, 248, 0.35);
+}
+
+.neon-border {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
+}
+
+.neon-text-glow {
+  text-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+}
+
+/* Range input styling for electric blue theme */
+input[type="range"] {
+  accent-color: #3b82f6;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
