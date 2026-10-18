@@ -22,9 +22,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm install --legacy-peer-deps
+
+      - name: Install Capacitor packages
+        run: |
+          npm install --legacy-peer-deps --save-exact \
+            @capacitor/core@7 \
+            @capacitor/android@7
+          npm install --legacy-peer-deps --save-dev --save-exact \
+            @capacitor/cli@7
+
+      - name: Check Capacitor configuration
+        run: |
+          if [ ! -f capacitor.config.ts ] && \
+             [ ! -f capacitor.config.js ] && \
+             [ ! -f capacitor.config.json ]; then
+            echo "ERROR: Capacitor configuration is missing."
+            exit 1
+          fi
 
       - name: Build Web Application
         run: npm run build
@@ -35,14 +53,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Check Capacitor configuration
-        run: |
-          if [ ! -f capacitor.config.ts ] && [ ! -f capacitor.config.js ] && [ ! -f capacitor.config.json ]; then
-            echo "ERROR: Capacitor configuration is missing."
-            exit 1
-          fi
-
-      - name: Add Capacitor Android Platform if missing
+      - name: Add Android platform if missing
         run: |
           if [ ! -d android ]; then
             npx cap add android
