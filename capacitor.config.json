@@ -1,16 +1,6 @@
+
 {
-  "appId": "com.rbdigital.nexforce",
+  "appId": "com.nexforce.app",
   "appName": "NEXFORCE",
-  "webDir": "dist",
-  "bundledWebRuntime": false,
-  "server": {
-    "androidScheme": "https",
-    "cleartext": true
-  },
-  "android": {
-    "backgroundColor": "#090d0b",
-    "allowMixedContent": true,
-    "captureInput": true,
-    "webContentsDebuggingEnabled": true
-  }
+  "webDir": "dist"
 }
