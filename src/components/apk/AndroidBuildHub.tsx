@@ -62,21 +62,113 @@ export const AndroidBuildHub: React.FC = () => {
         </div>
 
         {/* Section 1: Quick Automated Build via GitHub Actions */}
-        <div className="bg-[#0f172a] p-5 rounded-2xl border border-[#213253] space-y-3">
-          <div className="flex items-center gap-2">
-            <Github className="w-5 h-5 text-sky-400" />
-            <h2 className="text-sm font-bold font-heading uppercase text-white">
-              Method 1: Automated 1-Click Cloud APK Build (GitHub Actions)
-            </h2>
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-[#213253] space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Github className="w-5 h-5 text-sky-400" />
+              <h2 className="text-sm font-bold font-heading uppercase text-white">
+                Method 1: Automated 1-Click Cloud APK Build (GitHub Actions)
+              </h2>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+              CI/CD READY
+            </span>
           </div>
+
+          {/* GitHub Actions Syntax Error Fix Callout */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-red-950/40 via-[#161528] to-[#0f172a] border border-red-500/50 space-y-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>Fix for GitHub Error: "Invalid workflow file / yaml syntax on line 1"</span>
+              </div>
+              <button
+                onClick={() => copyCode('workflowYaml', `name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+
+      - name: Install Project Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Install Capacitor and Setup Android Platform
+        run: |
+          npm install --no-save @capacitor/core @capacitor/cli @capacitor/android
+          npx cap add android || true
+          npx cap sync android
+
+      - name: Grant Execute Permission to Gradle Wrapper
+        run: |
+          if [ -f android/gradlew ]; then
+            chmod +x android/gradlew
+          fi
+
+      - name: Build Android Debug APK with Gradle
+        working-directory: ./android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GymingResearchAdvance-Debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error`)}
+                className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 shadow transition-colors shrink-0"
+              >
+                {copiedKey === 'workflowYaml' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedKey === 'workflowYaml' ? 'Copied Valid YAML!' : 'Copy Validated build-apk.yml'}</span>
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-300 leading-relaxed">
+              This error occurs when an empty line exists before <code className="text-white">name:</code>, when a dangling lone dash (<code className="text-red-400 font-bold">-</code>) is left on a line, or when duplicate <code className="text-sky-300">setup-android</code> steps are pasted. 
+              Click the button above to copy the 100% verified, clean YAML, then replace the entire contents of <span className="text-sky-400 font-mono">.github/workflows/build-apk.yml</span> in your repository.
+            </p>
+          </div>
+
           <p className="text-xs text-gray-400 leading-relaxed">
-            The project already includes a production-grade CI/CD pipeline at <span className="text-sky-400 font-mono">.github/workflows/build-apk.yml</span>. When you push to your GitHub repo, an automated Ubuntu container with JDK 17, Android SDK, and Gradle compiles the APK automatically.
+            The project includes a production-grade CI/CD pipeline at <span className="text-sky-400 font-mono">.github/workflows/build-apk.yml</span>. When you push to your GitHub repo, an automated Ubuntu container with JDK 17, Android SDK, and Gradle compiles the APK automatically.
           </p>
 
           <div className="p-3 bg-[#162038] rounded-xl border border-[#213253] space-y-1.5 text-xs text-gray-300">
             <div className="font-bold text-white">How to get your APK via GitHub:</div>
             <ol className="list-decimal list-inside space-y-1 text-gray-300">
-              <li>Push this repository to your GitHub account.</li>
+              <li>In your repository on GitHub, open <span className="text-sky-400 font-mono">.github/workflows/build-apk.yml</span>, click the Pencil icon (Edit), select all, paste the copied YAML from above, and click <strong>Commit changes</strong>.</li>
               <li>Go to the <span className="text-sky-400 font-semibold">Actions</span> tab on GitHub.</li>
               <li>Click on the <span className="text-white font-semibold">Build Android APK</span> workflow and click <span className="text-sky-400">Run workflow</span>.</li>
               <li>Once completed (approx 2–3 minutes), scroll to <span className="text-white font-semibold">Artifacts</span> and download <span className="text-sky-400 font-mono">GymingResearchAdvance-Debug-APK.zip</span>.</li>

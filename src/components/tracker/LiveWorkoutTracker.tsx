@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import confetti from 'canvas-confetti';
 import { HeartRateMonitor } from '../common/HeartRateMonitor';
 import { TechniqueVideoModal } from '../common/TechniqueVideoModal';
+import { RestTimerStopwatch } from '../common/RestTimerStopwatch';
 import { VoiceCoachHUD } from './VoiceCoachHUD';
 import { VoiceCommandHandler } from '../../utils/voiceCommandCoach';
 import {
@@ -23,7 +24,8 @@ import {
   Activity,
   Award,
   Video,
-  Mic
+  Mic,
+  Clock
 } from 'lucide-react';
 
 export const LiveWorkoutTracker: React.FC = () => {
@@ -329,9 +331,30 @@ export const LiveWorkoutTracker: React.FC = () => {
             {isWorkoutPaused ? <Play className="w-4 h-4 text-sky-400" /> : <Pause className="w-4 h-4" />}
           </button>
 
+          {/* Rest Timer & Stopwatch Launch Button */}
+          <button
+            onClick={() => {
+              if (!isRestTimerActive) {
+                setRestSecondsRemaining(90);
+                setIsRestTimerActive(true);
+              } else {
+                setIsRestTimerActive(false);
+              }
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+              isRestTimerActive
+                ? 'bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-500/30'
+                : 'bg-[#162038] hover:bg-[#1f2d4d] text-sky-300 border-[#213253]'
+            }`}
+            title="Toggle Rest Timer & Stopwatch"
+          >
+            <Timer className={`w-4 h-4 ${isRestTimerActive ? 'animate-spin text-white' : 'text-sky-400'}`} />
+            <span className="hidden sm:inline font-mono">Rest Timer</span>
+          </button>
+
           {/* Elapsed Time */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#162038] rounded-xl border border-[#213253]">
-            <Timer className="w-4 h-4 text-sky-400" />
+            <Clock className="w-4 h-4 text-sky-400" />
             <span className="font-mono-numbers font-bold text-sm text-white">
               {formatTime(elapsedSeconds)}
             </span>
@@ -347,41 +370,25 @@ export const LiveWorkoutTracker: React.FC = () => {
         </div>
       </div>
 
-      {/* Rest Timer Floating Banner if Active */}
+      {/* REUSABLE REST TIMER & STOPWATCH COMPONENT */}
       {isRestTimerActive && (
-        <div className="bg-[#0e1d3a] border-b border-blue-500/40 px-4 py-2.5 flex items-center justify-between text-xs text-sky-200 shadow-lg animate-fade-in">
-          <div className="flex items-center gap-2">
-            <Timer className="w-4 h-4 text-sky-400 animate-spin" />
-            <span className="font-mono font-bold uppercase tracking-wider text-sky-400">Rest Timer:</span>
-            <span className="font-mono-numbers text-base font-bold text-white">
-              {formatTime(restSecondsRemaining)}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setRestSecondsRemaining((prev) => prev + 30)}
-              className="px-2.5 py-1 bg-[#162038] hover:bg-[#1f2d4d] text-sky-300 text-[11px] font-mono rounded-lg border border-[#213253] transition-colors"
-            >
-              +30s
-            </button>
-            <button
-              onClick={() => {
-                setIsRestTimerActive(false);
-                setRestSecondsRemaining(0);
-              }}
-              className="px-2.5 py-1 bg-blue-600/30 hover:bg-blue-600/50 text-sky-200 text-[11px] font-mono rounded-lg border border-blue-500/40 transition-colors"
-            >
-              Skip Rest
-            </button>
-            <button
-              onClick={() => setIsRestTimerActive(false)}
-              className="p-1 text-gray-400 hover:text-white"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
+        <RestTimerStopwatch
+          initialSeconds={restSecondsRemaining || 90}
+          isActive={isRestTimerActive}
+          title={`Rest Period • ${currentExercise?.exerciseName || 'Active Workout'}`}
+          nextExerciseOrSet={`Set ${targetSetIndex + 1} of ${currentExercise?.exerciseName || ''}`}
+          onComplete={() => {
+            playChime('rest-end');
+          }}
+          onDismiss={() => {
+            setIsRestTimerActive(false);
+            setRestSecondsRemaining(0);
+          }}
+          onAddSeconds={(secs) => {
+            setRestSecondsRemaining((prev) => Math.max(0, prev + secs));
+          }}
+          variant="banner"
+        />
       )}
 
       {/* Main Exercise Viewport */}
